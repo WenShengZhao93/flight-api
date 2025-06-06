@@ -2,6 +2,7 @@ package com.ibm.flight.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -23,5 +24,9 @@ public interface FlightRepository extends JpaRepository<Flight, Integer> {
          @Param("endDate") LocalDateTime endDate,
          @Param("passengerCount") Integer passengerCount
      );
+    
+    
+    @Query("SELECT f FROM Flight f WHERE f.id = :id ")
+    Optional<Flight> findById(@Param("id") Long id);
     
 }

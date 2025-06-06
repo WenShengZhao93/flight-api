@@ -1,13 +1,19 @@
 package com.ibm.flight.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+
+import com.ibm.flight.dto.FlightDetailResponseDTO;
 import com.ibm.flight.dto.FlightSearchRequestDTO;
 import com.ibm.flight.dto.FlightSearchResponseDTO;
 import com.ibm.flight.entity.Flight;
 import com.ibm.flight.repository.FlightRepository;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -48,5 +54,25 @@ public class FlightService {
             .returningFlights(returningFlights)
             .isRoundTrip(request.isRoundTrip())
             .build();
+    }
+    
+    public FlightDetailResponseDTO getFlightDetails(Long flightId) {
+    	Optional<Flight> flight = flightRepository.findById(flightId);
+        
+        if (flight.isEmpty()) {
+        	throw new RuntimeException("Flight not found");
+        }
+        
+        return convertToDetailDTO(flight.get());
+    }
+    
+    private FlightDetailResponseDTO convertToDetailDTO(Flight flight) {
+    	FlightDetailResponseDTO flightDetailDTO = new FlightDetailResponseDTO();
+        BeanUtils.copyProperties(flight, flightDetailDTO);
+        flightDetailDTO.setPrice(flight.getBasePriceBusiness().doubleValue());
+        flightDetailDTO.setId(flight.getId().longValue());
+        flightDetailDTO.setAvailableSeats(Integer.valueOf(flight.getGateNumber()));
+           
+        return flightDetailDTO;
     }
 }

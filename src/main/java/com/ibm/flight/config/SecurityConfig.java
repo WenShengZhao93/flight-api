@@ -1,5 +1,7 @@
 package com.ibm.flight.config;
 
+import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,20 +20,25 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.csrf(AbstractHttpConfigurer::disable)
+		// CORS PROCESS
+		http
+		.cors(cors -> cors
+                .configurationSource(request -> {
+                    var corsConfiguration = new org.springframework.web.cors.CorsConfiguration();
+                    corsConfiguration.setAllowedOrigins(List.of("http://localhost:5173"));
+                    corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+                    corsConfiguration.setAllowCredentials(true);
+                    corsConfiguration.setAllowedHeaders(List.of("*"));
+                    return corsConfiguration;
+                }))
+		// API PROTECTED
+		.csrf(AbstractHttpConfigurer::disable)
 		        .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll()
+		          .requestMatchers("/api/**").permitAll()
                 .anyRequest().authenticated());
 		return http.build();
-		
-//        http.authorizeHttpRequests(customizer -> customizer
-//                .requestMatchers("/api/auth").authenticated() // /api/authは認証が必要なページ
-//                .requestMatchers("/api/**").permitAll() // /api以下はすべて許可
-//                .anyRequest().denyAll()); // その他のリクエストはすべて拒否
-//        return http.build();
 	}
 
 	@Bean
@@ -44,9 +51,4 @@ public class SecurityConfig {
 	PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-	
-//    @Bean
-//    UserDetailsService userDetailsService() {
-//        return new CustomUserDetailsService(userRepository);
-//    }
 }
