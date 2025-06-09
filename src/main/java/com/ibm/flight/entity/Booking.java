@@ -32,21 +32,20 @@ public class Booking {
 	@Column(name = "booking_reference", nullable = false, length = 10, unique = true)
 	private String bookingReference;
 
-	@Column(name = "booking_date")
-	private LocalDateTime bookingDate;
+	@Column(name = "booking_time")
+	private LocalDateTime bookingTime;
 
-	@Column(name = "total_amount", nullable = false, precision = 10, scale = 2)
-	private BigDecimal totalAmount;
+	@Column(name = "total_price", nullable = false, precision = 10, scale = 2)
+	private BigDecimal totalPrice;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "payment_status", columnDefinition = "ENUM('pending', 'paid', 'refunded', 'cancelled') DEFAULT 'pending'")
-	private PaymentStatus paymentStatus;
+	@Column(name = "booking_status")
+	private String bookingStatus;
 
-	@Column(name = "seat_preference", length = 255)
-	private String seatPreference;
+	@Column(name = "passenger_count")
+	private Integer passengerCount;
 
-	@Column(name = "special_requests", columnDefinition = "TEXT")
-	private String specialRequests;
+	@Column(name = "cover_image_url")
+	private String coverImageUrl;
 
 	@CreationTimestamp
 	@Column(name = "created_at", updatable = false)
@@ -55,8 +54,4 @@ public class Booking {
 	@UpdateTimestamp
 	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
-
-	public enum PaymentStatus {
-		PENDING, PAID, REFUNDED, CANCELLED
-	}
 }

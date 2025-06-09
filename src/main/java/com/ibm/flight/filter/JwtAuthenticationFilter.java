@@ -1,6 +1,7 @@
 package com.ibm.flight.filter;
 
 import java.io.IOException;
+import java.util.Enumeration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
@@ -33,8 +34,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
 			@NonNull FilterChain filterChain) throws ServletException, IOException {
-		System.out.println(request.getRequestURI());
-		final String authHeader = request.getHeader("Authorization");
+        final String authHeader = request.getHeader("Authorization");
 		final String jwt;
 		final String userName;
 
@@ -46,7 +46,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		jwt = authHeader.substring(7);
 		userName = jwtUtil.extractUsername(jwt);
 
-		if (userName != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+		if (userName != null) {
 			UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
 			if (jwtUtil.isTokenValid(jwt, userDetails)) {
 				UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails,

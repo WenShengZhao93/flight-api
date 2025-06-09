@@ -24,17 +24,11 @@ public class Flight {
 	@Column(name = "flight_number", nullable = false, length = 10)
 	private String flightNumber;
 
-	@ManyToOne
-	@JoinColumn(name = "airline_id", nullable = false)
-	private Airline airline;
+	@Column(name = "departure_airport", nullable = false)
+	private String departureAirport;
 
-	@ManyToOne
-	@JoinColumn(name = "departure_airport_id", nullable = false)
-	private Airport departureAirport;
-
-	@ManyToOne
-	@JoinColumn(name = "arrival_airport_id", nullable = false)
-	private Airport arrivalAirport;
+	@Column(name = "arrival_airport", nullable = false)
+	private String arrivalAirport;
 
 	@Column(name = "departure_time", nullable = false)
 	private LocalDateTime departureTime;
@@ -54,9 +48,8 @@ public class Flight {
 	@Column(name = "base_price_first_class", nullable = false, precision = 10, scale = 2)
 	private BigDecimal basePriceFirstClass;
 
-	@Enumerated(EnumType.STRING)
 	@Column(name = "status", columnDefinition = "ENUM('scheduled', 'delayed', 'cancelled', 'departed', 'arrived')")
-	private FlightStatus status;
+	private String status;
 
 	@Column(name = "gate_number", length = 10)
 	private String gateNumber;
@@ -68,8 +61,4 @@ public class Flight {
 	@UpdateTimestamp
 	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
-
-	public enum FlightStatus {
-		SCHEDULED, DELAYED, CANCELLED, DEPARTED, ARRIVED
-	}
 }
